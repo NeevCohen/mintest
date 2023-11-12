@@ -3,19 +3,22 @@
 #include <unistd.h>
 #include <wait.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
-static inline void red (void) {
-  printf("\033[1;31m");
+static inline void red(void)
+{
+    printf("\033[1;31m");
 }
 
-static inline void green(void) {
-  printf("\033[1;32m");
+static inline void green(void)
+{
+    printf("\033[1;32m");
 }
 
-static inline void reset(void) {
-  printf("\033[0m");
+static inline void reset(void)
+{
+    printf("\033[0m");
 }
-
 
 #define __MINTEST_SAFE_BLOCK(block) \
     do                              \
@@ -27,41 +30,41 @@ static inline void reset(void) {
 
 #define TEST_SUITE(suite) static void suite(void)
 
-#define __RUN_TEST_CASE(test, caller) __MINTEST_SAFE_BLOCK(                                               \
-    pid_t pid;                                                                                            \
-    int status;                                                                                           \
-    struct timeval begin;                                                                                 \
-    struct timeval end;                                                                                   \
-    int microseconds_spent;                                                                                       \
-    double seconds_spent; \
-                                                                                                          \
-    pid = fork();                                                                                         \
-    switch (pid) {                                                                                        \
-        case -1:                                                                                          \
-            perror("fork");                                                                               \
-            break;                                                                                        \
-        case 0:                                                                                           \
-            test();                                                                                       \
-            break;                                                                                        \
-        default:                                                                                          \
-            gettimeofday(&begin, NULL);                                                                   \
-            waitpid(pid, &status, 0);                                                                     \
-            gettimeofday(&end, NULL);                                                                     \
-            microseconds_spent = ((end.tv_sec - begin.tv_sec) * 1000000) + (end.tv_usec - begin.tv_usec);         \
-            seconds_spent = (double)microseconds_spent / 1000000 ; \
-            if (WIFEXITED(status))                                                                        \
-            {                                                                                             \
-                green(); \
+#define __RUN_TEST_CASE(test, caller) __MINTEST_SAFE_BLOCK(                                                            \
+    pid_t pid;                                                                                                         \
+    int status;                                                                                                        \
+    struct timeval begin;                                                                                              \
+    struct timeval end;                                                                                                \
+    int microseconds_spent;                                                                                            \
+    double seconds_spent;                                                                                              \
+                                                                                                                       \
+    pid = fork();                                                                                                      \
+    switch (pid) {                                                                                                     \
+        case -1:                                                                                                       \
+            perror("fork");                                                                                            \
+            break;                                                                                                     \
+        case 0:                                                                                                        \
+            test();                                                                                                    \
+            exit(EXIT_SUCCESS);                                                                                        \
+        default:                                                                                                       \
+            gettimeofday(&begin, NULL);                                                                                \
+            waitpid(pid, &status, 0);                                                                                  \
+            gettimeofday(&end, NULL);                                                                                  \
+            microseconds_spent = ((end.tv_sec - begin.tv_sec) * 1000000) + (end.tv_usec - begin.tv_usec);              \
+            seconds_spent = (double)microseconds_spent / 1000000;                                                      \
+            if (WIFEXITED(status))                                                                                     \
+            {                                                                                                          \
+                green();                                                                                               \
                 printf("\u2714 {%s:%s} passed after %.3fs [%d]\n", caller, #test, seconds_spent, WEXITSTATUS(status)); \
-                reset(); \
-            }                                                                                             \
-            else if (WIFSIGNALED(status))                                                                 \
-            {                                                                                             \
-                red(); \
+                reset();                                                                                               \
+            }                                                                                                          \
+            else if (WIFSIGNALED(status))                                                                              \
+            {                                                                                                          \
+                red();                                                                                                 \
                 printf("\u2718 {%s:%s} failed after %.3fs [%d]\n", caller, #test, seconds_spent, WTERMSIG(status));    \
-                reset(); \
-            }                                                                                             \
-            break;                                                                                        \
+                reset();                                                                                               \
+            }                                                                                                          \
+            break;                                                                                                     \
     })
 
 #define RUN_TEST_CASE(test) __RUN_TEST_CASE(test, __func__)
