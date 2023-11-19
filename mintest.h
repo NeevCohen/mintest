@@ -1,4 +1,8 @@
 // Author: Neev Cohen - https://github.com/NeevCohen
+
+#ifndef MINTEST_MINTEST_H
+#define MINTEST_MINTEST_H
+
 #include <stdio.h>
 #include <unistd.h>
 #include <wait.h>
@@ -191,3 +195,5 @@ Assertions
     } else {                                                                                                                  \
         printf(".");                                                                                                          \
     })
+
+#endif /* MINTEST_MINTEST_H */
