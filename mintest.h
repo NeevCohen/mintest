@@ -58,14 +58,14 @@ static inline void reset(void)
     int microseconds_spent;                                                                                                  \
     double seconds_spent;                                                                                                    \
                                                                                                                              \
+    if (mintest_test_setup)                                                                                                  \
+        mintest_test_setup();                                                                                                \
     pid = fork();                                                                                                            \
     switch (pid) {                                                                                                           \
         case -1:                                                                                                             \
             perror("fork");                                                                                                  \
             break;                                                                                                           \
         case 0:                                                                                                              \
-            if (mintest_test_setup)                                                                                          \
-                mintest_test_setup();                                                                                        \
             test();                                                                                                          \
             exit(EXIT_SUCCESS);                                                                                              \
         default:                                                                                                             \
