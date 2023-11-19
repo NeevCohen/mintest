@@ -5,6 +5,8 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS 0x20 /* Don't use a file.  */
@@ -180,10 +182,10 @@ Assertions
     const char *mintest_tmp_r = result;                                                                                       \
     if (mintest_num_assertions)(*mintest_num_assertions)++;                                                                   \
     if (!mintest_tmp_e) {                                                                                                     \
-        minunit_tmp_e = "<null pointer>";                                                                                     \
+        mintest_tmp_e = "<null pointer>";                                                                                     \
     } if (!mintest_tmp_r) {                                                                                                   \
-        minunit_tmp_r = "<null pointer>";                                                                                     \
-    } if (strcmp(minunit_tmp_e, minunit_tmp_r) != 0) {                                                                        \
+        mintest_tmp_r = "<null pointer>";                                                                                     \
+    } if (strcmp(mintest_tmp_e, mintest_tmp_r) != 0) {                                                                        \
         printf("assertion failed:\n\t%s:%d: '%s' expected but was '%s'\n", __FILE__, __LINE__, mintest_tmp_e, mintest_tmp_r); \
         exit(EXIT_FAILURE);                                                                                                   \
     } else {                                                                                                                  \
